@@ -1,0 +1,131 @@
+<!-- app/templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Content Generator and Analyzer</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 56px;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .form-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .result-section {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">AI Content & Analysis</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#content-section">Generate Content</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analysis-section">Analyze Content</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#result-section">Results</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">AI-Powered Content Generator and Analyzer</h1>
+
+        <div id="content-section" class="form-section">
+            <h2>Generate Content</h2>
+            <form id="content-form">
+                <div class="form-group">
+                    <label for="topic">Enter Topic</label>
+                    <input type="text" class="form-control" id="topic" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Generate Content</button>
+            </form>
+        </div>
+
+        <div id="analysis-section" class="form-section">
+            <h2>Analyze Content</h2>
+            <form id="analyze-form">
+                <div class="form-group">
+                    <label for="content">Enter Content for Analysis</label>
+                    <textarea class="form-control" id="content" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Analyze Content</button>
+                <button type="button" class="btn btn-secondary" id="import-content">Import Generated Content</button>
+            </form>
+        </div>
+
+        <div id="result-section" class="result-section">
+            <h2>Results</h2>
+            <div class="mb-4">
+                <h3>Generated Content</h3>
+                <p id="generated-content"></p>
+            </div>
+            <div>
+                <h3>Analysis Results</h3>
+                <ul>
+                    <li>Readability: <span id="readability"></span></li>
+                    <li>Sentiment: <span id="sentiment"></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('content-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const topic = document.getElementById('topic').value;
+            const payload = { topic: topic };
+
+            const response = await fetch('/generate/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            document.getElementById('generated-content').innerText = data.generated_text;
+        });
+
+        document.getElementById('analyze-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = document.getElementById('content').value;
+            const payload = { content: content };
+
+            const response = await fetch('/analyze/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            document.getElementById('readability').innerText = data.readability;
+            document.getElementById('sentiment').innerText = data.sentiment;
+        });
+
+        document.getElementById('import-content').addEventListener('click', () => {
+            const generatedContent = document.getElementById('generated-content').innerText;
+            document.getElementById('content').value = generatedContent;
+        });
+    </script>
+</body>
+</html>
